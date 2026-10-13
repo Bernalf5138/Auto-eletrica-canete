@@ -6,6 +6,7 @@ import { InventoryView } from './views/InventoryView';
 import { OrdersView } from './views/OrdersView';
 import { CustomersView } from './views/CustomersView';
 import { AppointmentsAndAfterSalesView } from './views/AppointmentsAndAfterSalesView';
+import { VehiclesInWorkshopView } from './views/VehiclesInWorkshopView';
 import { CurrencyConverterBar } from './components/CurrencyConverterBar';
 import { BannerShowcaseModal } from './components/BannerShowcaseModal';
 import { SettingsAndBackupModal } from './components/SettingsAndBackupModal';
@@ -14,11 +15,11 @@ import { checkForUpdates, UpdateInfo } from './services/updaterService';
 import { UPDATER_CONFIG } from './config/updater';
 import { 
   ShoppingCart, Package, FileText, HeartHandshake, 
-  Sparkles, Settings, Zap, Users, RefreshCw
+  Sparkles, Settings, Zap, Users, RefreshCw, Car
 } from 'lucide-react';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'pdv' | 'estoque' | 'os' | 'clientes' | 'pos_venda'>('pdv');
+  const [activeTab, setActiveTab] = useState<'pdv' | 'estoque' | 'veiculos_taller' | 'os' | 'clientes' | 'pos_venda'>('pdv');
   const [products, setProducts] = useState<Product[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [orders, setOrders] = useState<OrderOfService[]>([]);
@@ -139,6 +140,10 @@ export function App() {
     storageService.saveOrders(updated);
   };
 
+  const countInWorkshop = orders.filter(o => 
+    ['em_andamento', 'aguardando_peca', 'concluido', 'aprovado', 'orcamento'].includes(o.status)
+  ).length;
+
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-red-600 selection:text-white pb-4 lg:pb-0">
       {/* Top Navbar */}
@@ -190,6 +195,23 @@ export function App() {
           >
             <ShoppingCart className="w-4 h-4" />
             PDV Mostrador
+          </button>
+
+          <button
+            onClick={() => setActiveTab('veiculos_taller')}
+            className={`px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 transition ${
+              activeTab === 'veiculos_taller'
+                ? 'bg-red-600 text-white font-bold shadow-md shadow-red-950'
+                : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+            }`}
+          >
+            <Car className="w-4 h-4 text-amber-400" />
+            <span>Vehículos en Taller</span>
+            {countInWorkshop > 0 && (
+              <span className="ml-1 bg-amber-400 text-neutral-950 text-[10px] font-black px-1.5 py-0.5 rounded-full font-mono">
+                {countInWorkshop}
+              </span>
+            )}
           </button>
 
           <button
@@ -295,6 +317,20 @@ export function App() {
         </button>
         <button
           type="button"
+          onClick={() => { setActiveTab('veiculos_taller'); if (navigator.vibrate) navigator.vibrate(25); }}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition active:scale-95 ${
+            activeTab === 'veiculos_taller' ? 'bg-red-600 text-white shadow-md shadow-red-950' : 'bg-neutral-850 text-neutral-300'
+          }`}
+        >
+          <Car className="w-3.5 h-3.5 text-amber-400" /> Vehículos en Taller
+          {countInWorkshop > 0 && (
+            <span className="bg-amber-400 text-neutral-950 text-[9px] font-black px-1.5 py-0.2 rounded-full font-mono">
+              {countInWorkshop}
+            </span>
+          )}
+        </button>
+        <button
+          type="button"
           onClick={() => { setActiveTab('estoque'); if (navigator.vibrate) navigator.vibrate(25); }}
           className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition active:scale-95 ${
             activeTab === 'estoque' ? 'bg-red-600 text-white shadow-md shadow-red-950' : 'bg-neutral-850 text-neutral-300'
@@ -348,6 +384,18 @@ export function App() {
             settings={settings}
             onCompleteSale={handleCompleteSale}
             onSaveOrder={handleSaveOrder}
+            onSaveCustomer={handleSaveCustomer}
+          />
+        )}
+
+        {activeTab === 'veiculos_taller' && (
+          <VehiclesInWorkshopView
+            orders={orders}
+            customers={customers}
+            products={products}
+            settings={settings}
+            onSaveOrder={handleSaveOrder}
+            onDeleteOrder={handleDeleteOrder}
             onSaveCustomer={handleSaveCustomer}
           />
         )}
