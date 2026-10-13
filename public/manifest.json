@@ -1,0 +1,16 @@
+{
+  "short_name": "AE Cañete",
+  "name": "Auto Elétrica Cañete - Gestão & Estoque",
+  "icons": [
+    {
+      "src": "/logo.jpg",
+      "type": "image/jpeg",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0a0a0a",
+  "theme_color": "#b91c1c",
+  "display": "standalone",
+  "orientation": "portrait"
+}

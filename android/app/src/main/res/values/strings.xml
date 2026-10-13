@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Auto Electrica Canete</string>
+    <string name="title_activity_main">Auto Electrica Canete</string>
+    <string name="package_name">com.autoeletricacanete.app</string>
+    <string name="custom_url_scheme">com.autoeletricacanete.app</string>
+</resources>
