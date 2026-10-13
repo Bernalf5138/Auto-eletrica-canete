@@ -350,6 +350,7 @@ export const PDVView: React.FC<PDVViewProps> = ({
                 <img
                   src={prod.image || './logo.jpg'}
                   alt={prod.name}
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = './logo.jpg'; }}
                   className="w-full h-full object-cover group-hover:scale-105 transition"
                 />
                 <span className={`absolute top-1 right-1 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${

@@ -99,13 +99,13 @@ Especialistas em Elétrica Automotiva, Caminhões, Linha Agrícola & Eletrônica
           {/* Main Banner Presentation */}
           <div className="relative rounded-2xl overflow-hidden border border-neutral-700 shadow-2xl group">
             <img
-              src="/banner.jpg"
+              src="./banner.jpg"
               alt="Banner Oficial Auto Elétrica Cañete"
               className="w-full h-auto object-cover max-h-[420px]"
             />
             <div className="absolute top-3 right-3 flex gap-2">
               <a
-                href="/banner.jpg"
+                href="./banner.jpg"
                 download="Banner_Oficial_Auto_Eletrica_Canete.jpg"
                 className="px-3.5 py-2 bg-black/85 hover:bg-red-600 text-white rounded-xl text-xs font-bold backdrop-blur border border-white/10 flex items-center gap-1.5 transition shadow-lg"
               >
@@ -118,12 +118,12 @@ Especialistas em Elétrica Automotiva, Caminhões, Linha Agrícola & Eletrônica
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center bg-neutral-950 p-4 sm:p-6 rounded-2xl border border-neutral-800">
             <div className="flex flex-col items-center text-center">
               <img
-                src="/logo.jpg"
+                src="./logo.jpg"
                 alt="Logo Auto Elétrica Cañete"
                 className="w-24 h-24 sm:w-28 sm:h-28 object-contain rounded-2xl border border-neutral-700 shadow-lg p-1 bg-neutral-900"
               />
               <a
-                href="/logo.jpg"
+                href="./logo.jpg"
                 download="Logo_Auto_Eletrica_Canete.jpg"
                 className="mt-2 text-xs text-red-400 hover:text-red-300 font-semibold flex items-center gap-1"
               >

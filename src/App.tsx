@@ -149,6 +149,7 @@ export function App() {
             <img
               src="./logo.jpg"
               alt="Logo Auto Eléctrica Cañete"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).src = './logo.png'; }}
               className="w-9 h-9 sm:w-11 sm:h-11 object-contain rounded-xl border border-neutral-700 bg-neutral-950 p-0.5 shadow-md"
             />
             <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-red-600 rounded-full border border-neutral-900 flex items-center justify-center">

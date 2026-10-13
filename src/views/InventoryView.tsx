@@ -218,6 +218,7 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
                       <img
                         src={product.image || './logo.jpg'}
                         alt={product.name}
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = './logo.jpg'; }}
                         className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                       />
                       <div className="absolute top-2 left-2 flex gap-1">
@@ -326,6 +327,7 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
                         <img
                           src={p.image || './logo.jpg'}
                           alt={p.name}
+                          onError={(e) => { (e.currentTarget as HTMLImageElement).src = './logo.jpg'; }}
                           className="w-9 h-9 object-cover rounded-lg border border-neutral-800"
                         />
                       </td>
