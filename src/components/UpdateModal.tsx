@@ -22,13 +22,29 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({ updateInfo, onClose })
     }
 
     setDownloading(true);
-    // Abrir diretamente a URL do arquivo .apk ou .exe
-    window.open(downloadTargetUrl, '_system');
 
-    // Se estiver em ambiente web / browser
+    // Si está en Android nativo, usa el descargador directo del sistema sin abrir el navegador
+    if ((window as any).NativeUpdater?.startUpdate) {
+      (window as any).NativeUpdater.startUpdate(downloadTargetUrl);
+      setTimeout(() => {
+        onClose();
+      }, 1200);
+      return;
+    }
+
+    // En navegador o escritorio, descarga directa y cierra el modal
+    const link = document.createElement('a');
+    link.href = downloadTargetUrl;
+    link.setAttribute('download', updateInfo.platform === 'android' ? 'Auto_Electrica_Canete.apk' : 'Auto_Electrica_Canete.exe');
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
     setTimeout(() => {
       setDownloading(false);
-    }, 4000);
+      onClose();
+    }, 1500);
   };
 
   return (
