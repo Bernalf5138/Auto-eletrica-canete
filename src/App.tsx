@@ -47,7 +47,8 @@ export function App() {
     if (UPDATER_CONFIG.checkOnStartup) {
       const timer = setTimeout(() => {
         checkForUpdates().then((info) => {
-          if (info.hasUpdate) {
+          const isDismissed = localStorage.getItem('dismissed_update_' + info.latestVersion);
+          if (info.hasUpdate && !isDismissed) {
             setUpdateInfo(info);
             setIsUpdateModalOpen(true);
           }

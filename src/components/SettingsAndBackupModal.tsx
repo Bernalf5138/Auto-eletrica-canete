@@ -4,6 +4,7 @@ import { X, Settings, Download, Upload, Save, Check, Sparkles, RefreshCw } from 
 import { storageService } from '../services/storage';
 import { UPDATER_CONFIG } from '../config/updater';
 import { checkForUpdates } from '../services/updaterService';
+import { Capacitor } from '@capacitor/core';
 
 interface SettingsAndBackupModalProps {
   isOpen: boolean;
@@ -275,8 +276,21 @@ export const SettingsAndBackupModal: React.FC<SettingsAndBackupModalProps> = ({
                   try {
                     const res = await checkForUpdates();
                     if (res.hasUpdate) {
-                      setUpdateStatus(`¡Nueva versión v${res.latestVersion} disponible!`);
-                      window.open(res.apkUrl || res.exeUrl || 'https://github.com/Bernalf5138/Auto-eletrica-canete/releases', '_blank');
+                      setUpdateStatus(`¡Nueva versión v${res.latestVersion} encontrada! Iniciando descarga...`);
+                      const targetUrl = res.apkUrl || res.exeUrl;
+                      const plugins = (Capacitor as any)?.Plugins;
+                      if (plugins?.NativeUpdater?.startUpdate && targetUrl) {
+                        plugins.NativeUpdater.startUpdate({ url: targetUrl });
+                      } else if ((window as any).NativeUpdater?.startUpdate && targetUrl) {
+                        (window as any).NativeUpdater.startUpdate(targetUrl);
+                      } else if (targetUrl) {
+                        const a = document.createElement('a');
+                        a.href = targetUrl;
+                        a.download = 'Auto_Electrica_Canete.apk';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                      }
                     } else {
                       setUpdateStatus(`Tu aplicación está actualizada (v${UPDATER_CONFIG.currentVersion}).`);
                     }

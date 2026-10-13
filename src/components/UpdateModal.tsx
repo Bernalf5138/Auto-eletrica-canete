@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Sparkles, Download, X, ExternalLink, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Sparkles, Download, X, CheckCircle2 } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
 import type { UpdateInfo } from '../services/updaterService';
 
 interface UpdateModalProps {
@@ -15,6 +16,11 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({ updateInfo, onClose })
       ? updateInfo.apkUrl || updateInfo.exeUrl
       : updateInfo.exeUrl || updateInfo.apkUrl;
 
+  const handleDismiss = () => {
+    localStorage.setItem('dismissed_update_' + updateInfo.latestVersion, 'true');
+    onClose();
+  };
+
   const handleUpdateClick = () => {
     if (!downloadTargetUrl) {
       alert('Enlace de descarga no encontrado en la última versión.');
@@ -22,21 +28,31 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({ updateInfo, onClose })
     }
 
     setDownloading(true);
+    localStorage.setItem('dismissed_update_' + updateInfo.latestVersion, 'true');
 
-    // Si está en Android nativo, usa el descargador directo del sistema sin abrir el navegador
+    // 1. Tenta Capacitor Plugin Nativo
+    const plugins = (Capacitor as any)?.Plugins;
+    if (plugins?.NativeUpdater?.startUpdate) {
+      plugins.NativeUpdater.startUpdate({ url: downloadTargetUrl });
+      setTimeout(() => {
+        onClose();
+      }, 1000);
+      return;
+    }
+
+    // 2. Tenta Window JavascriptInterface
     if ((window as any).NativeUpdater?.startUpdate) {
       (window as any).NativeUpdater.startUpdate(downloadTargetUrl);
       setTimeout(() => {
         onClose();
-      }, 1200);
+      }, 1000);
       return;
     }
 
-    // En navegador o escritorio, descarga directa y cierra el modal
+    // 3. Fallback no PC / Navegador (download direto sem abrir aba em branco)
     const link = document.createElement('a');
     link.href = downloadTargetUrl;
-    link.setAttribute('download', updateInfo.platform === 'android' ? 'Auto_Electrica_Canete.apk' : 'Auto_Electrica_Canete.exe');
-    link.target = '_blank';
+    link.download = updateInfo.platform === 'android' ? 'Auto_Electrica_Canete.apk' : 'Auto_Electrica_Canete.exe';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -44,7 +60,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({ updateInfo, onClose })
     setTimeout(() => {
       setDownloading(false);
       onClose();
-    }, 1500);
+    }, 1200);
   };
 
   return (
@@ -55,7 +71,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({ updateInfo, onClose })
 
         {/* Botão fechar */}
         <button
-          onClick={onClose}
+          onClick={handleDismiss}
           className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition"
           aria-label="Cerrar"
         >
@@ -96,7 +112,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({ updateInfo, onClose })
             Novedades y Mejoras:
           </label>
           <div className="max-h-40 overflow-y-auto p-3 bg-zinc-950/70 border border-zinc-800 rounded-xl text-sm text-zinc-300 whitespace-pre-line leading-relaxed font-sans">
-            {updateInfo.releaseNotes || 'Mejoras de rendimiento y corrección de pantalla.'}
+            {updateInfo.releaseNotes || 'Mejoras de rendimiento, gestión de vehículos y estabilidad.'}
           </div>
         </div>
 
@@ -118,18 +134,11 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({ updateInfo, onClose })
           </button>
 
           <button
-            onClick={onClose}
+            onClick={handleDismiss}
             className="py-3 px-4 bg-zinc-800 hover:bg-zinc-750 text-zinc-300 font-semibold rounded-xl border border-zinc-700 transition"
           >
             Más tarde
           </button>
-        </div>
-
-        {/* Detalhe da plataforma */}
-        <div className="mt-3 text-center">
-          <span className="text-[11px] text-zinc-500">
-            Plataforma detectada: <strong className="text-zinc-400 uppercase">{updateInfo.platform}</strong>
-          </span>
         </div>
       </div>
     </div>
